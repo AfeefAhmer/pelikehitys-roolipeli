@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     Rigidbody2D rb;
     [SerializeField]
     float moveSpeed;
+    DoorController activeDoor;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -17,7 +18,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     private void FixedUpdate()
@@ -32,6 +33,7 @@ public class PlayerController : MonoBehaviour
         if (collision.CompareTag("Door"))
         {
             Debug.Log("Found Door");
+            activeDoor = collision.GetComponent<DoorController>();
         }
         else if (collision.CompareTag("Merchant"))
         {
@@ -43,5 +45,21 @@ public class PlayerController : MonoBehaviour
     {
         Vector2 v = value.Get<Vector2>();
         lastMovement = v;
-    }    
+    }
+    public void OpenDoor()
+    {
+        activeDoor.ReceiveAction(DoorController.OvenToiminto.Avaa);
+    }
+    public void CloseDoor()
+    {
+        activeDoor.ReceiveAction(DoorController.OvenToiminto.Sulje);
+    }
+    public void LockDoor()
+    {
+        activeDoor.ReceiveAction(DoorController.OvenToiminto.Lukitse);
+    }
+    public void UnlockDoor() 
+    {
+        activeDoor.ReceiveAction(DoorController.OvenToiminto.AvaaLukko);
+    }
 }

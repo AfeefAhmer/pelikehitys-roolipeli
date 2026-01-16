@@ -12,6 +12,20 @@ public class DoorController : MonoBehaviour
     Sprite LockedSprite;
     [SerializeField]
     Sprite UnlockedSprite;
+    public enum OvenTila
+    {
+        Auki,
+        Kiinni,
+        Lukossa
+    }
+    public enum OvenToiminto
+    {
+        Sulje,
+        Lukitse,
+        Avaa,
+        AvaaLukko
+    }
+    OvenTila oven_tila;
 
     BoxCollider2D colliderComp;
 
@@ -44,16 +58,47 @@ public class DoorController : MonoBehaviour
         openColor = new Color(0.5f, 0.8f, 1.0f);
 
 
-         // TODO
-         // missä tilassa ovi on kun peli alkaa?
+        // TODO
+        // missä tilassa ovi on kun peli alkaa?
+        oven_tila = OvenTila.Lukossa;
     }
 
     /// <summary>
     /// Oveen kohdistuu jokin toiminto joka muuttaa sen tilaa
     /// </summary>
-    public void ReceiveAction()
+    public void ReceiveAction(OvenToiminto oven_toiminto)
     {
-        
+        switch (oven_toiminto)
+        {
+            case OvenToiminto.AvaaLukko:
+                if (oven_tila == OvenTila.Lukossa)
+                {
+                    oven_tila = OvenTila.Kiinni;
+                    UnlockDoor();
+                }
+                break;
+            case OvenToiminto.Avaa:
+                if (oven_tila == OvenTila.Kiinni)
+                {
+                    oven_tila = OvenTila.Auki;
+                    OpenDoor();
+                }
+                break;
+            case OvenToiminto.Sulje:
+                if (oven_tila == OvenTila.Auki)
+                {
+                    oven_tila = OvenTila.Kiinni;
+                    CloseDoor();
+                }
+                break;
+            case OvenToiminto.Lukitse:
+                if (oven_tila == OvenTila.Kiinni)
+                {
+                    oven_tila = OvenTila.Lukossa;
+                    LockDoor();
+                }
+                break;
+        }
     }
 
     // Kun tulee toiminto, sen perusteella kutsutaan jotakin
