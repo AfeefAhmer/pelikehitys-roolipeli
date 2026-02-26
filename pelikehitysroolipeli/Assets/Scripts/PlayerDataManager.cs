@@ -1,21 +1,21 @@
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 /// <summary>
-/// PlayerDataManager hallitsee pelaajan kokemuspisteit‰, rahaa ja osumapisteit‰.
-/// MonoBehaviour-singleton, joka s‰ilyy scene-vaihdosten yli.
+/// Singleton joka hallitsee pelaajan kokemuspisteit‰, rahaa ja HP:t‰.
+/// UI p‰ivitet‰‰n automaattisesti.
 /// </summary>
 public class PlayerDataManager : MonoBehaviour
 {
     public static PlayerDataManager Instance { get; private set; }
 
-    [Header("Player Data")]
+    [Header("Player Stats")]
     [SerializeField] private int experiencePoints = 0;
-    [SerializeField] private int money = 0;
+    [SerializeField] private int money = 100;
     [SerializeField] private int health = 100;
 
-    [Header("UI References")]
+    [Header("UI References (TMP Text)")]
     [SerializeField] private TMP_Text experienceText;
     [SerializeField] private TMP_Text coinText;
     [SerializeField] private TMP_Text hitpointText;
@@ -26,7 +26,7 @@ public class PlayerDataManager : MonoBehaviour
 
     private void Awake()
     {
-        // Singleton-toteutus
+        // Singleton turvallisuus
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -35,32 +35,43 @@ public class PlayerDataManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
+        // P‰ivitet‰‰n UI aina kun scene vaihtuu
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    private void Start()
+    private void OnDestroy()
     {
-        // Haetaan UI-elementit scenest‰ jos niit‰ ei ole asetettu editorissa
-        experienceText = GameObject.Find("ExperienceText")?.GetComponent<TMP_Text>();
-        coinText = GameObject.Find("CoinText")?.GetComponent<TMP_Text>();
-        hitpointText = GameObject.Find("HitpointText")?.GetComponent<TMP_Text>();
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
 
-
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        FindUIReferences();
         UpdateUI();
+    }
+
+    private void FindUIReferences()
+    {
+        if (experienceText == null)
+            experienceText = GameObject.Find("ExperienceText")?.GetComponent<TMP_Text>();
+        if (coinText == null)
+            coinText = GameObject.Find("CoinText")?.GetComponent<TMP_Text>();
+        if (hitpointText == null)
+            hitpointText = GameObject.Find("HitpointText")?.GetComponent<TMP_Text>();
     }
 
     private void UpdateUI()
     {
         if (experienceText != null)
             experienceText.text = "XP: " + experiencePoints;
-
         if (coinText != null)
             coinText.text = "Coins: " + money;
-
         if (hitpointText != null)
             hitpointText.text = "HP: " + health;
     }
 
-    // EXPERIENCE
+    // ================= EXPERIENCE =================
     public void AddExperience(int amount)
     {
         if (amount <= 0) return;
@@ -68,7 +79,7 @@ public class PlayerDataManager : MonoBehaviour
         UpdateUI();
     }
 
-    // HEALTH
+    // ================= HEALTH =================
     public void AddHealth(int amount)
     {
         if (amount <= 0) return;
@@ -79,19 +90,16 @@ public class PlayerDataManager : MonoBehaviour
     public int RemoveHealth(int damageAmount)
     {
         if (damageAmount <= 0) return health;
-
         health -= damageAmount;
         health = Mathf.Max(0, health);
-
         UpdateUI();
         return health;
     }
 
-    // MONEY
+    // ================= MONEY =================
     public int AddMoney(int coinAmount)
     {
         if (coinAmount <= 0) return money;
-
         money += coinAmount;
         UpdateUI();
         return money;
@@ -100,48 +108,57 @@ public class PlayerDataManager : MonoBehaviour
     public bool TakeMoney(int coinAmount)
     {
         if (coinAmount <= 0) return true;
-
-        if (money < coinAmount)
-            return false;
+        if (money < coinAmount) return false;
 
         money -= coinAmount;
         UpdateUI();
         return true;
     }
 
-    // TESTAUSNAPIT
-    void OnGUI()
+    // ================= ONGUI TESTI =================
+    private void OnGUI()
     {
-        int w = 160;
-        int h = 30;
-        int gap = 35;
+        int buttonWidth = 120;
+        int buttonHeight = 30;
+        int margin = 10;
 
-        // Oikea reuna
-        int x = Screen.width - w - 10;
-        int y = 10;
+        int baseX = margin; // vasen reuna
+        int yStart = Screen.height - (buttonHeight + margin) * 3; // ensimm‰isen rivin y
+        int y = yStart;
 
-        if (GUI.Button(new Rect(x, y, w, h), "Add XP"))
+        // XP napit
+        if (GUI.Button(new Rect(baseX, y, buttonWidth, buttonHeight), "+XP"))
+        {
             AddExperience(10);
+        }
+        if (GUI.Button(new Rect(baseX + buttonWidth + margin, y, buttonWidth, buttonHeight), "-XP"))
+        {
+            experiencePoints = Mathf.Max(0, experiencePoints - 10);
+            UpdateUI();
+        }
 
-        y += gap;
+        y += buttonHeight + margin;
 
-        if (GUI.Button(new Rect(x, y, w, h), "Add HP"))
-            AddHealth(5);
+        // Money napit
+        if (GUI.Button(new Rect(baseX, y, buttonWidth, buttonHeight), "+Coins"))
+        {
+            AddMoney(10);
+        }
+        if (GUI.Button(new Rect(baseX + buttonWidth + margin, y, buttonWidth, buttonHeight), "-Coins"))
+        {
+            TakeMoney(10);
+        }
 
-        y += gap;
+        y += buttonHeight + margin;
 
-        if (GUI.Button(new Rect(x, y, w, h), "Take Damage"))
+        // Health napit
+        if (GUI.Button(new Rect(baseX, y, buttonWidth, buttonHeight), "+HP"))
+        {
+            AddHealth(10);
+        }
+        if (GUI.Button(new Rect(baseX + buttonWidth + margin, y, buttonWidth, buttonHeight), "-HP"))
+        {
             RemoveHealth(10);
-
-        y += gap;
-
-        if (GUI.Button(new Rect(x, y, w, h), "Add Money"))
-            AddMoney(5);
-
-        y += gap;
-
-        if (GUI.Button(new Rect(x, y, w, h), "Spend Money"))
-            TakeMoney(5);
+        }
     }
-
 }
