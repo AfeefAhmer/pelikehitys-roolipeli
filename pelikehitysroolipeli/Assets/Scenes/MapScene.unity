@@ -9555,9 +9555,9 @@ MonoBehaviour:
   experiencePoints: 0
   money: 0
   health: 100
-  experienceText: {fileID: 0}
-  coinText: {fileID: 0}
-  hitpointText: {fileID: 0}
+  experienceText: {fileID: 2079458248}
+  coinText: {fileID: 74867947}
+  hitpointText: {fileID: 1173055024}
 --- !u!4 &1109539118
 Transform:
   m_ObjectHideFlags: 0
@@ -11215,24 +11215,6 @@ MonoBehaviour:
   foodPriceText: {fileID: 1786289916}
   foodBuyButton: {fileID: 2051993774}
   foodCancelButton: {fileID: 420398850}
---- !u!114 &1373199135
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 693147495}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 55df1dff8a1cc6e419f2bd22981175a7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  experiencePoints: 0
-  money: 100
-  health: 100
-  experienceText: {fileID: 2079458248}
-  coinText: {fileID: 74867947}
-  hitpointText: {fileID: 1173055024}
 --- !u!1 &1376897313
 GameObject:
   m_ObjectHideFlags: 0
@@ -15866,9 +15848,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1169393004168610200, guid: a742a6290b12b72489ae85a1db41017d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1373199130}
-    - targetCorrespondingSourceObject: {fileID: 1169393004168610200, guid: a742a6290b12b72489ae85a1db41017d, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1373199135}
   m_SourcePrefab: {fileID: 100100000, guid: a742a6290b12b72489ae85a1db41017d, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
@@ -15877,7 +15856,6 @@ SceneRoots:
   - {fileID: 519420032}
   - {fileID: 619394802}
   - {fileID: 505110453}
-  - {fileID: 6807556070278235976}
   - {fileID: 2992820612062808492}
   - {fileID: 765477975374541149}
   - {fileID: 1850566107401702281}
@@ -15886,3 +15864,4 @@ SceneRoots:
   - {fileID: 887561148}
   - {fileID: 1811282064}
   - {fileID: 1109539118}
+  - {fileID: 6807556070278235976}
