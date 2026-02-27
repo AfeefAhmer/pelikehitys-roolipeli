@@ -1,43 +1,42 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
     Vector2 lastMovement;
     Rigidbody2D rb;
-    [SerializeField]
-    float moveSpeed;
+
+    [SerializeField] float moveSpeed;
+
     DoorController activeDoor;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
     void Start()
     {
         lastMovement = Vector2.zero;
         rb = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-
-    }
-
-    private void FixedUpdate()
-    {
-
         rb.MovePosition(rb.position + lastMovement * moveSpeed * Time.fixedDeltaTime);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Huomaa mit� pelaaja l�yt��
         if (collision.CompareTag("Door"))
         {
             Debug.Log("Found Door");
             activeDoor = collision.GetComponent<DoorController>();
+
+            // 🔊 Soita ääni kun ovi löydetään
+            AudioManager.Instance.PlaySound(AudioManager.SoundEffect.PlayerOpenDoor);
         }
         else if (collision.CompareTag("Merchant"))
         {
             Debug.Log("Found Merchant");
+
+            // 🔊 Soita ääni kun kauppias löydetään
+            AudioManager.Instance.PlaySound(AudioManager.SoundEffect.PlayerMeetMerchant);
         }
     }
 
@@ -46,20 +45,54 @@ public class PlayerController : MonoBehaviour
         Vector2 v = value.Get<Vector2>();
         lastMovement = v;
     }
+
     public void OpenDoor()
     {
-        activeDoor.ReceiveAction(DoorController.OvenToiminto.Avaa);
+        if (activeDoor != null)
+        {
+            activeDoor.ReceiveAction(DoorController.OvenToiminto.Avaa);
+            AudioManager.Instance.PlaySound(AudioManager.SoundEffect.PlayerOpenDoor);
+        }
+        else
+        {
+            // 🔊 Virheääni
+            AudioManager.Instance.PlaySound(AudioManager.SoundEffect.PlayerInvalidAction);
+        }
     }
+
     public void CloseDoor()
     {
-        activeDoor.ReceiveAction(DoorController.OvenToiminto.Sulje);
+        if (activeDoor != null)
+        {
+            activeDoor.ReceiveAction(DoorController.OvenToiminto.Sulje);
+        }
+        else
+        {
+            AudioManager.Instance.PlaySound(AudioManager.SoundEffect.PlayerInvalidAction);
+        }
     }
+
     public void LockDoor()
     {
-        activeDoor.ReceiveAction(DoorController.OvenToiminto.Lukitse);
+        if (activeDoor != null)
+        {
+            activeDoor.ReceiveAction(DoorController.OvenToiminto.Lukitse);
+        }
+        else
+        {
+            AudioManager.Instance.PlaySound(AudioManager.SoundEffect.PlayerInvalidAction);
+        }
     }
-    public void UnlockDoor() 
+
+    public void UnlockDoor()
     {
-        activeDoor.ReceiveAction(DoorController.OvenToiminto.AvaaLukko);
+        if (activeDoor != null)
+        {
+            activeDoor.ReceiveAction(DoorController.OvenToiminto.AvaaLukko);
+        }
+        else
+        {
+            AudioManager.Instance.PlaySound(AudioManager.SoundEffect.PlayerInvalidAction);
+        }
     }
 }

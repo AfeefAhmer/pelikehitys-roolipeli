@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
@@ -59,6 +59,10 @@ public class PlayerMerchantInteraction : MonoBehaviour
         {
             currentMerchant = merchant;
             OpenMerchant();
+
+            // 🔊 Soitetaan ääni kaikille kauppiaille
+            AudioManager.Instance.PlaySound(
+                AudioManager.SoundEffect.PlayerMeetMerchant);
         }
     }
 
@@ -92,7 +96,6 @@ public class PlayerMerchantInteraction : MonoBehaviour
                 currentMerchant.GetPeraNames(),
                 val => { selectedPera = val; UpdateArrowCost(); });
 
-            // SLIDER
             if (varsiSlider != null)
             {
                 varsiSlider.minValue = 60;
@@ -120,6 +123,8 @@ public class PlayerMerchantInteraction : MonoBehaviour
 
             foodPanel.SetActive(true);
             foodNameLabel.text = currentMerchant.merchantName;
+
+            selectedPaa = 0; // alustetaan valinta
 
             SetupDropdown(paaDropdown,
                 currentMerchant.GetPaaraakaNames(),
@@ -208,20 +213,25 @@ public class PlayerMerchantInteraction : MonoBehaviour
         if (currentMerchant == null) return;
         if (currentCost <= 0) return;
 
-        if (PlayerDataManager.Instance
-            .TakeMoney((int)currentCost))
+        if (PlayerDataManager.Instance.TakeMoney((int)currentCost))
         {
-            if (currentMerchant.merchantType
-                == MerchantType.FoodMerchant)
+            // 🔊 Osto onnistui kaikille kauppiaille
+            AudioManager.Instance.PlaySound(
+                AudioManager.SoundEffect.PlayerBuyItem);
+
+            if (currentMerchant.merchantType == MerchantType.FoodMerchant)
             {
-                PlayerDataManager.Instance
-                    .AddHealth(currentHeal);
+                PlayerDataManager.Instance.AddHealth(currentHeal);
             }
 
             Debug.Log("Osto onnistui! Hinta: " + currentCost);
         }
         else
         {
+            // 🔊 Ei tarpeeksi rahaa kaikille kauppiaille
+            AudioManager.Instance.PlaySound(
+                AudioManager.SoundEffect.PlayerInvalidAction);
+
             Debug.Log("Ei tarpeeksi rahaa!");
         }
     }
