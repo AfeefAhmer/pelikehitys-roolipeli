@@ -9,11 +9,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float moveSpeed;
 
     DoorController activeDoor;
+    Reppu Inventory;
+    Tavara tavara = null!;
 
     void Start()
     {
         lastMovement = Vector2.zero;
         rb = GetComponent<Rigidbody2D>();
+        Inventory = new Reppu(10, 20, 15);
     }
 
     void FixedUpdate()
@@ -28,15 +31,44 @@ public class PlayerController : MonoBehaviour
             Debug.Log("Found Door");
             activeDoor = collision.GetComponent<DoorController>();
 
-            // 🔊 Soita ääni kun ovi löydetään
             AudioManager.Instance.PlaySound(AudioManager.SoundEffect.PlayerOpenDoor);
         }
         else if (collision.CompareTag("Merchant"))
         {
             Debug.Log("Found Merchant");
 
-            // 🔊 Soita ääni kun kauppias löydetään
             AudioManager.Instance.PlaySound(AudioManager.SoundEffect.PlayerMeetMerchant);
+        }
+        else if (collision.CompareTag("Item"))
+        {
+            Debug.Log("Found Item");
+
+            tavara = collision.GetComponent<Tavara>();
+
+            if (Inventory.Lisaa(tavara))
+            {
+                Debug.Log("Item added in Inventory");
+
+                // 🔥 Poistaa objektin pelistä
+                Destroy(collision.gameObject);
+            }
+            else
+            {
+                Debug.Log("Ei onnistunut");
+            }
+        }
+    }
+    public bool OstoLisatty(Tavara Osto)
+    {
+        if (Inventory.Lisaa(Osto))
+        {
+            Debug.Log("Item added in Inventory");
+            return true;  // onnistui
+        }
+        else
+        {
+            Debug.Log("Ei onnistunut, reppu täynnä");
+            return false; // ei onnistunut
         }
     }
 
@@ -55,7 +87,6 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            // 🔊 Virheääni
             AudioManager.Instance.PlaySound(AudioManager.SoundEffect.PlayerInvalidAction);
         }
     }
@@ -94,5 +125,9 @@ public class PlayerController : MonoBehaviour
         {
             AudioManager.Instance.PlaySound(AudioManager.SoundEffect.PlayerInvalidAction);
         }
+    }
+    public Reppu GetInventory()
+    {
+        return Inventory;
     }
 }

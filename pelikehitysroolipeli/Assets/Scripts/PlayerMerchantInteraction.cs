@@ -27,6 +27,10 @@ public class PlayerMerchantInteraction : MonoBehaviour
     public Button foodBuyButton;
     public Button foodCancelButton;
 
+    [Header("Prefabs")]
+    public GameObject ateriaPrefab; // Prefab, jossa Ateria-komponentti ja Inspectorissa asetettu paino/tilavuus
+    public GameObject nuoliPrefab;
+
     private int selectedKarki;
     private int selectedPera;
     private int selectedPaa;
@@ -34,6 +38,8 @@ public class PlayerMerchantInteraction : MonoBehaviour
     private int varrenPituus = 70;
     private double currentCost;
     private int currentHeal;
+
+    
 
     void Start()
     {
@@ -60,9 +66,7 @@ public class PlayerMerchantInteraction : MonoBehaviour
             currentMerchant = merchant;
             OpenMerchant();
 
-            // 🔊 Soitetaan ääni kaikille kauppiaille
-            AudioManager.Instance.PlaySound(
-                AudioManager.SoundEffect.PlayerMeetMerchant);
+            AudioManager.Instance.PlaySound(AudioManager.SoundEffect.PlayerMeetMerchant);
         }
     }
 
@@ -213,26 +217,85 @@ public class PlayerMerchantInteraction : MonoBehaviour
         if (currentMerchant == null) return;
         if (currentCost <= 0) return;
 
-        if (PlayerDataManager.Instance.TakeMoney((int)currentCost))
+        // Tarkista rahat ensin
+        if (!PlayerDataManager.Instance.TakeMoney((int)currentCost))
         {
-            // 🔊 Osto onnistui kaikille kauppiaille
-            AudioManager.Instance.PlaySound(
-                AudioManager.SoundEffect.PlayerBuyItem);
-
-            if (currentMerchant.merchantType == MerchantType.FoodMerchant)
-            {
-                PlayerDataManager.Instance.AddHealth(currentHeal);
-            }
-
-            Debug.Log("Osto onnistui! Hinta: " + currentCost);
+            AudioManager.Instance.PlaySound(AudioManager.SoundEffect.PlayerInvalidAction);
+            Debug.Log("Ei tarpeeksi rahaa ostoon!");
+            return;
         }
-        else
-        {
-            // 🔊 Ei tarpeeksi rahaa kaikille kauppiaille
-            AudioManager.Instance.PlaySound(
-                AudioManager.SoundEffect.PlayerInvalidAction);
 
-            Debug.Log("Ei tarpeeksi rahaa!");
+        AudioManager.Instance.PlaySound(AudioManager.SoundEffect.PlayerBuyItem);
+
+        PlayerController controller = GetComponent<PlayerController>();
+        if (controller == null) return;
+
+        // 🍖 FOOD MERCHANT
+        if (currentMerchant.merchantType == MerchantType.FoodMerchant)
+        {
+            if (ateriaPrefab != null)
+            {
+                GameObject go = Instantiate(ateriaPrefab);
+                Tavara tavara = go.GetComponent<Ateria>();
+
+                if (tavara != null)
+                {
+                    if (controller.OstoLisatty(tavara))
+                    {
+                        PlayerDataManager.Instance.AddHealth(currentHeal);
+                        Debug.Log("Ateria ostettu! Hinta: " + currentCost + " kultaa");
+                    }
+                    else
+                    {
+                        // Reppu täynnä → perutaan osto
+                        PlayerDataManager.Instance.AddMoney((int)currentCost);
+                        AudioManager.Instance.PlaySound(AudioManager.SoundEffect.PlayerInvalidAction);
+                        Debug.Log("Reppu on täynnä! Et voi ostaa ateriaa.");
+                    }
+                }
+
+                Destroy(go);
+            }
+            else
+            {
+                Debug.LogError("Ateria prefab puuttuu!");
+            }
+        }
+
+        // 🏹 ARROW MERCHANT
+        else if (currentMerchant.merchantType == MerchantType.ArrowMerchant)
+        {
+            if (nuoliPrefab != null)
+            {
+                GameObject go = Instantiate(nuoliPrefab);
+                Nuoli nuoli = go.GetComponent<Nuoli>();
+
+                if (nuoli != null)
+                {
+                    string karki = currentMerchant.GetKarkiNames()[selectedKarki];
+                    string pera = currentMerchant.GetPeraNames()[selectedPera];
+
+                    nuoli.AsetaTiedot(karki, pera, varrenPituus);
+
+                    if (controller.OstoLisatty(nuoli))
+                    {
+                        Debug.Log("Nuoli ostettu! Hinta: " + currentCost + " kultaa");
+                    }
+                    else
+                    {
+                        // Reppu täynnä → perutaan osto
+                        PlayerDataManager.Instance.AddMoney((int)currentCost);
+                        AudioManager.Instance.PlaySound(AudioManager.SoundEffect.PlayerInvalidAction);
+                        Debug.Log("Reppu on täynnä! Et voi ostaa nuolta.");
+                    }
+                }
+
+                Destroy(go);
+            }
+            else
+            {
+                Debug.LogError("Nuoli prefab puuttuu!");
+            }
         }
     }
 }
