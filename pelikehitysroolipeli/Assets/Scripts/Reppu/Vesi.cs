@@ -2,8 +2,14 @@ using UnityEngine;
 
 public class Vesi : Tavara
 {
-    public override string ToString()
+    public int healAmount = 20;
+
+    public override string ToString() => "Vesi";
+
+    public override bool Use(PlayerController player)
     {
-        return "Vesi";
+        PlayerDataManager.Instance.AddHealth(healAmount);
+        Debug.Log("Vesi käytetty! + " + healAmount + " HP");
+        return true;
     }
 }

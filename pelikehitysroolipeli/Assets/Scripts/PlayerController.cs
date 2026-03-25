@@ -3,131 +3,113 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    Vector2 lastMovement;
-    Rigidbody2D rb;
+    private Vector2 lastMovement;
+    private Rigidbody2D rb;
 
-    [SerializeField] float moveSpeed;
+    [SerializeField] private float moveSpeed = 5f;
 
-    DoorController activeDoor;
-    Reppu Inventory;
-    Tavara tavara = null!;
+    private Reppu inventory;
+    private DoorController activeDoor;
 
-    void Start()
+    public Nuoli chosenArrow;
+    public Tavara chosenWeapon;
+    public InventoryUI inventoryUI;
+
+    private void Awake()
     {
-        lastMovement = Vector2.zero;
-        rb = GetComponent<Rigidbody2D>();
-        Inventory = new Reppu(10, 20, 15);
+        // 🔹 LUODAAN inventory ennen muita skriptejä
+        inventory = new Reppu(10, 20f, 15f);
     }
 
-    void FixedUpdate()
+    private void Start()
+    {
+        rb = GetComponent<Rigidbody2D>();
+        inventoryUI?.RefreshUI();
+    }
+
+    private void FixedUpdate()
     {
         rb.MovePosition(rb.position + lastMovement * moveSpeed * Time.fixedDeltaTime);
+    }
+
+    private void OnMoveAction(InputValue value)
+    {
+        lastMovement = value.Get<Vector2>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Door"))
         {
-            Debug.Log("Found Door");
             activeDoor = collision.GetComponent<DoorController>();
-
-            AudioManager.Instance.PlaySound(AudioManager.SoundEffect.PlayerOpenDoor);
-        }
-        else if (collision.CompareTag("Merchant"))
-        {
-            Debug.Log("Found Merchant");
-
-            AudioManager.Instance.PlaySound(AudioManager.SoundEffect.PlayerMeetMerchant);
         }
         else if (collision.CompareTag("Item"))
         {
-            Debug.Log("Found Item");
-
-            tavara = collision.GetComponent<Tavara>();
-
-            if (Inventory.Lisaa(tavara))
+            Tavara itemPrefab = collision.GetComponent<Tavara>();
+            if (itemPrefab != null)
             {
-                Debug.Log("Item added in Inventory");
-
-                // 🔥 Poistaa objektin pelistä
-                Destroy(collision.gameObject);
+                // 🔹 Luo inventoryyn kelpaava instanssi
+                Tavara itemData = CreateInventoryItem(itemPrefab);
+                
+                if (inventory.Lisaa(itemData))
+                {
+                    Destroy(collision.gameObject); // poista scene-esine
+                    inventoryUI?.RefreshUI();
+                    Debug.Log("Esine lisätty inventoryyn: " + itemData.ToString());
+                }
+                else
+                {
+                    Destroy(itemData); // ei mahdu inventoryyn
+                    Debug.Log("Reppu täynnä, esine ei lisätty: " + itemPrefab.ToString());
+                }
             }
-            else
-            {
-                Debug.Log("Ei onnistunut");
-            }
-        }
-    }
-    public bool OstoLisatty(Tavara Osto)
-    {
-        if (Inventory.Lisaa(Osto))
-        {
-            Debug.Log("Item added in Inventory");
-            return true;  // onnistui
-        }
-        else
-        {
-            Debug.Log("Ei onnistunut, reppu täynnä");
-            return false; // ei onnistunut
         }
     }
 
-    void OnMoveAction(InputValue value)
+    // 🔹 Luo inventoryyn kelpaavan esine-instanssin
+    private Tavara CreateInventoryItem(Tavara prefab)
     {
-        Vector2 v = value.Get<Vector2>();
-        lastMovement = v;
+        // Instantiate, jotta saadaan oikea aliluokka ja ylikirjoitettu Use-metodi
+        Tavara itemInstance = Instantiate(prefab);
+        itemInstance.gameObject.SetActive(false); // ei näy scenessä
+        return itemInstance;
     }
 
-    public void OpenDoor()
+    // 🔹 INVENTORY METODIT
+
+    public Reppu GetInventory() => inventory;
+
+    public bool OstoLisatty(Tavara tavara)
     {
-        if (activeDoor != null)
+        if (inventory.Lisaa(tavara))
         {
-            activeDoor.ReceiveAction(DoorController.OvenToiminto.Avaa);
-            AudioManager.Instance.PlaySound(AudioManager.SoundEffect.PlayerOpenDoor);
+            inventoryUI?.RefreshUI();
+            return true;
         }
-        else
-        {
-            AudioManager.Instance.PlaySound(AudioManager.SoundEffect.PlayerInvalidAction);
-        }
+
+        Debug.Log("Reppu täynnä!");
+        return false;
     }
 
-    public void CloseDoor()
+    public void KaytaTavaraa(Tavara tavara)
     {
-        if (activeDoor != null)
+        if (tavara == null)
         {
-            activeDoor.ReceiveAction(DoorController.OvenToiminto.Sulje);
+            Debug.Log("Tavara NULL");
+            return;
         }
-        else
-        {
-            AudioManager.Instance.PlaySound(AudioManager.SoundEffect.PlayerInvalidAction);
-        }
-    }
 
-    public void LockDoor()
-    {
-        if (activeDoor != null)
+        bool success = tavara.Use(this);
+
+        if (success)
         {
-            activeDoor.ReceiveAction(DoorController.OvenToiminto.Lukitse);
-        }
-        else
-        {
-            AudioManager.Instance.PlaySound(AudioManager.SoundEffect.PlayerInvalidAction);
+            PoistaTavara(tavara);
         }
     }
 
-    public void UnlockDoor()
+    public void PoistaTavara(Tavara tavara)
     {
-        if (activeDoor != null)
-        {
-            activeDoor.ReceiveAction(DoorController.OvenToiminto.AvaaLukko);
-        }
-        else
-        {
-            AudioManager.Instance.PlaySound(AudioManager.SoundEffect.PlayerInvalidAction);
-        }
-    }
-    public Reppu GetInventory()
-    {
-        return Inventory;
+        inventory.GetItems().Remove(tavara);
+        inventoryUI?.RefreshUI();
     }
 }

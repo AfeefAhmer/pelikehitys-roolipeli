@@ -46,3 +46,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   paino: 1
   tilavuus: 0.5
+  healAmount: 20

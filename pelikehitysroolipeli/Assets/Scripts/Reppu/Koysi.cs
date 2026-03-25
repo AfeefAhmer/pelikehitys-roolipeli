@@ -2,8 +2,12 @@ using UnityEngine;
 
 public class Koysi : Tavara
 {
-    public override string ToString()
+    public override string ToString() => "Koysi";
+
+    public override bool Use(PlayerController player)
     {
-        return "Koysi";
+        player.chosenWeapon = this;
+        Debug.Log("Köysi valittu aseeksi");
+        return true;
     }
 }

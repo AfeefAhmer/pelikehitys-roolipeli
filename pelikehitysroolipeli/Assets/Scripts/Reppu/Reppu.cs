@@ -6,10 +6,10 @@ public class Reppu
     private List<Tavara> tavarat = new List<Tavara>();
 
     public int MaxMaara { get; }
-    public double MaxPaino { get; }
-    public double MaxTilavuus { get; }
+    public float MaxPaino { get; }
+    public float MaxTilavuus { get; }
 
-    public Reppu(int maxMaara, double maxPaino, double maxTilavuus)
+    public Reppu(int maxMaara, float maxPaino, float maxTilavuus)
     {
         MaxMaara = maxMaara;
         MaxPaino = maxPaino;
@@ -17,23 +17,16 @@ public class Reppu
     }
 
     public int TavaroidenMaara => tavarat.Count;
-    public double NykyPaino => tavarat.Sum(t => t.Paino);
-    public double NykyTilavuus => tavarat.Sum(t => t.Tilavuus);
-    public List<Tavara> GetItems()
-    {
-        return tavarat;
-    }
+    public float NykyPaino => tavarat.Sum(t => t.Paino);
+    public float NykyTilavuus => tavarat.Sum(t => t.Tilavuus);
+
+    public List<Tavara> GetItems() => tavarat;
 
     public bool Lisaa(Tavara tavara)
     {
-        if (TavaroidenMaara + 1 > MaxMaara)
-            return false;
-
-        if (NykyPaino + tavara.Paino > MaxPaino)
-            return false;
-
-        if (NykyTilavuus + tavara.Tilavuus > MaxTilavuus)
-            return false;
+        if (tavarat.Count >= MaxMaara) return false;
+        if (NykyPaino + tavara.Paino > MaxPaino) return false;
+        if (NykyTilavuus + tavara.Tilavuus > MaxTilavuus) return false;
 
         tavarat.Add(tavara);
         return true;

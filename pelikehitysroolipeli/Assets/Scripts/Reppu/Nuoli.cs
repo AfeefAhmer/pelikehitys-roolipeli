@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class Nuoli : Tavara
 {
     public string karki;
@@ -11,8 +13,12 @@ public class Nuoli : Tavara
         pituus = v;
     }
 
-    public override string ToString()
+    public override string ToString() => $"Nuoli ({karki}, {pera}, {pituus}cm)";
+
+    public override bool Use(PlayerController player)
     {
-        return $"Nuoli ({karki}, {pera}, {pituus}cm)";
+        player.chosenArrow = this;
+        Debug.Log("Nuoli valittu käyttöön");
+        return true;
     }
 }

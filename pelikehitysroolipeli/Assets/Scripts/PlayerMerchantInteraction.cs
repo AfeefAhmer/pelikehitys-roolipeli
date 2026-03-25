@@ -253,8 +253,6 @@ public class PlayerMerchantInteraction : MonoBehaviour
                         Debug.Log("Reppu on täynnä! Et voi ostaa ateriaa.");
                     }
                 }
-
-                Destroy(go);
             }
             else
             {
@@ -289,8 +287,6 @@ public class PlayerMerchantInteraction : MonoBehaviour
                         Debug.Log("Reppu on täynnä! Et voi ostaa nuolta.");
                     }
                 }
-
-                Destroy(go);
             }
             else
             {

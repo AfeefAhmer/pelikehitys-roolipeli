@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using UnityEngine;
 
-
-public class Ateria : Tavara 
+public class Ateria : Tavara
 {
-    public override string ToString()
+    public int healAmount = 20;
+
+    public override string ToString() => "Ateria";
+
+    public override bool Use(PlayerController player)
     {
-        return "Ateria";
+        PlayerDataManager.Instance.AddHealth(healAmount);
+        Debug.Log("Ateria käytetty! + " + healAmount + " HP");
+        return true;
     }
 }
-    
-    
-

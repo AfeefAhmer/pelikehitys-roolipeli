@@ -2,14 +2,19 @@ using UnityEngine;
 
 public class Tavara : MonoBehaviour
 {
-    [SerializeField] private double paino;
-    [SerializeField] private double tilavuus;
+    [SerializeField] private float paino;
+    [SerializeField] private float tilavuus;
 
-    public double Paino => paino;
-    public double Tilavuus => tilavuus;
+    public float Paino => paino;
+    public float Tilavuus => tilavuus;
 
-    public override string ToString()
+    public virtual bool Consumable => false;
+
+    public override string ToString() => "Tavara";
+
+    public virtual bool Use(PlayerController player)
     {
-        return "Tavara";
+        Debug.Log("T‰t‰ tavaraa ei voi k‰ytt‰‰");
+        return false;
     }
 }

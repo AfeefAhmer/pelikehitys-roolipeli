@@ -87,14 +87,6 @@ public class PlayerDataManager : MonoBehaviour
         UpdateUI();
     }
 
-    public int RemoveHealth(int damageAmount)
-    {
-        if (damageAmount <= 0) return health;
-        health -= damageAmount;
-        health = Mathf.Max(0, health);
-        UpdateUI();
-        return health;
-    }
 
     // ================= MONEY =================
     public int AddMoney(int coinAmount)
@@ -150,15 +142,5 @@ public class PlayerDataManager : MonoBehaviour
         }
 
         y += buttonHeight + margin;
-
-        // Health napit
-        if (GUI.Button(new Rect(baseX, y, buttonWidth, buttonHeight), "+HP"))
-        {
-            AddHealth(10);
-        }
-        if (GUI.Button(new Rect(baseX + buttonWidth + margin, y, buttonWidth, buttonHeight), "-HP"))
-        {
-            RemoveHealth(10);
-        }
     }
 }

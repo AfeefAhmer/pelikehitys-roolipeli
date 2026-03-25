@@ -1,34 +1,62 @@
-using UnityEngine;
+﻿using System.Text;
 using TMPro;
-using System.Text;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class InventoryUI : MonoBehaviour
 {
     public PlayerController player;
+
+    [SerializeField] private GameObject itemSlotPrefab;
+    [SerializeField] private Transform itemListParent;
     public TextMeshProUGUI itemListText;
 
-    void Update()
+    private void Start()
     {
-        if (player == null) return;
+        RefreshUI();
+    }
 
-        Reppu inv = player.GetInventory();
-        if (inv == null) return;
+    public void RefreshUI()
+    {
+        if (player == null || itemSlotPrefab == null || itemListParent == null)
+            return;
 
-        StringBuilder sb = new StringBuilder();
+        // Poista vanhat slotit
+        foreach (Transform child in itemListParent)
+            Destroy(child.gameObject);
 
-        sb.AppendLine("Items:");
-        sb.AppendLine("----------------");
-
-        foreach (var item in inv.GetItems())
+        foreach (var item in player.GetInventory().GetItems())
         {
-            sb.AppendLine(item.ToString());
+            if (item == null) continue;
+
+            GameObject slot = Instantiate(itemSlotPrefab, itemListParent);
+
+            TextMeshProUGUI text = slot.GetComponentInChildren<TextMeshProUGUI>();
+            if (text != null)
+                text.text = item.ToString();
+
+            Button btn = slot.GetComponent<Button>();
+            if (btn != null)
+            {
+                Tavara currentItem = item; // viittaa inventory-instanssiin
+                btn.onClick.RemoveAllListeners();
+                btn.onClick.AddListener(() =>
+                {
+                    player.KaytaTavaraa(currentItem);
+                });
+            }
         }
 
-        sb.AppendLine("----------------");
-        sb.AppendLine("Count: " + inv.TavaroidenMaara);
-        sb.AppendLine("Paino: " + inv.NykyPaino);
-        sb.AppendLine("Tilavuus: " + inv.NykyTilavuus);
+        // Tekstimuotoinen lista (valinnainen)
+        if (itemListText != null)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("Items:");
+            sb.AppendLine("----------------");
+            foreach (var item in player.GetInventory().GetItems())
+                sb.AppendLine(item != null ? item.ToString() : "Null Item");
 
-        itemListText.text = sb.ToString();
+            itemListText.text = sb.ToString();
+        }
     }
 }
