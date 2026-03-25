@@ -42,6 +42,7 @@ public class PlayerController : MonoBehaviour
         if (collision.CompareTag("Door"))
         {
             activeDoor = collision.GetComponent<DoorController>();
+            Debug.Log("Found Door");
         }
         else if (collision.CompareTag("Item"))
         {
@@ -111,5 +112,21 @@ public class PlayerController : MonoBehaviour
     {
         inventory.GetItems().Remove(tavara);
         inventoryUI?.RefreshUI();
+    }
+    public void OpenDoor()
+    {
+        activeDoor.ReceiveAction(DoorController.OvenToiminto.Avaa);
+    }
+    public void CloseDoor()
+    {
+        activeDoor.ReceiveAction(DoorController.OvenToiminto.Sulje);
+    }
+    public void LockDoor()
+    {
+        activeDoor.ReceiveAction(DoorController.OvenToiminto.Lukitse);
+    }
+    public void UnlockDoor()
+    {
+        activeDoor.ReceiveAction(DoorController.OvenToiminto.AvaaLukko);
     }
 }
