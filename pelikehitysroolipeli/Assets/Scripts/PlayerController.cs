@@ -14,6 +14,13 @@ public class PlayerController : MonoBehaviour
     public Nuoli chosenArrow;
     public Tavara chosenWeapon;
     public InventoryUI inventoryUI;
+    public float arrowSpeed = 20f;
+    public float fireCooldown = 0.5f;  // Aika sekunteina nuolien välillä
+    private float lastFireTime = -10f;
+
+    [Header("Crosshair")]
+    public GameObject crosshairPrefab; // Tähtäin prefab
+    private GameObject crosshairInstance;
 
     private void Awake()
     {
@@ -25,11 +32,40 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         inventoryUI?.RefreshUI();
+
+        // Luodaan tähtäin-instanssi
+        if (crosshairPrefab != null)
+        {
+            crosshairInstance = Instantiate(crosshairPrefab, Vector3.zero, Quaternion.identity);
+        }
     }
 
     private void FixedUpdate()
     {
         rb.MovePosition(rb.position + lastMovement * moveSpeed * Time.fixedDeltaTime);
+    }
+
+    void Update()
+    {
+        UpdateCrosshair();
+
+        // Tarkistetaan hiiren vasen nappi ja cooldown
+        if (Input.GetMouseButtonDown(0) && Time.time - lastFireTime >= fireCooldown)
+        {
+            ShootAtMouse();
+            lastFireTime = Time.time;
+        }
+    }
+
+    private void UpdateCrosshair()
+    {
+        if (crosshairInstance == null) return;
+
+        Vector3 mousePos = Input.mousePosition;
+        mousePos.z = Camera.main.nearClipPlane; // 2D: käytä nearClipPlane
+        Vector3 worldPos = Camera.main.ScreenToWorldPoint(mousePos);
+
+        crosshairInstance.transform.position = new Vector3(worldPos.x, worldPos.y, 0f);
     }
 
     private void OnMoveAction(InputValue value)
@@ -49,9 +85,8 @@ public class PlayerController : MonoBehaviour
             Tavara itemPrefab = collision.GetComponent<Tavara>();
             if (itemPrefab != null)
             {
-                // 🔹 Luo inventoryyn kelpaava instanssi
                 Tavara itemData = CreateInventoryItem(itemPrefab);
-                
+
                 if (inventory.Lisaa(itemData))
                 {
                     Destroy(collision.gameObject); // poista scene-esine
@@ -67,17 +102,14 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // 🔹 Luo inventoryyn kelpaavan esine-instanssin
     private Tavara CreateInventoryItem(Tavara prefab)
     {
-        // Instantiate, jotta saadaan oikea aliluokka ja ylikirjoitettu Use-metodi
         Tavara itemInstance = Instantiate(prefab);
-        itemInstance.gameObject.SetActive(false); // ei näy scenessä
+        itemInstance.gameObject.SetActive(false);
         return itemInstance;
     }
 
     // 🔹 INVENTORY METODIT
-
     public Reppu GetInventory() => inventory;
 
     public bool OstoLisatty(Tavara tavara)
@@ -113,20 +145,43 @@ public class PlayerController : MonoBehaviour
         inventory.GetItems().Remove(tavara);
         inventoryUI?.RefreshUI();
     }
-    public void OpenDoor()
+
+    public void OpenDoor() => activeDoor?.ReceiveAction(DoorController.OvenToiminto.Avaa);
+    public void CloseDoor() => activeDoor?.ReceiveAction(DoorController.OvenToiminto.Sulje);
+    public void LockDoor() => activeDoor?.ReceiveAction(DoorController.OvenToiminto.Lukitse);
+    public void UnlockDoor() => activeDoor?.ReceiveAction(DoorController.OvenToiminto.AvaaLukko);
+
+    // 🔹 NUOLEN AMPUMINEN 2D
+    public void ShootArrow(Vector3 target)
     {
-        activeDoor.ReceiveAction(DoorController.OvenToiminto.Avaa);
+        if (chosenArrow == null)
+        {
+            Debug.LogWarning("Nuolta ei ole valittu!");
+            return;
+        }
+
+        GameObject arrowInstance = Instantiate(chosenArrow.gameObject, transform.position, Quaternion.identity);
+
+        // 2D: suunta x-y tasossa
+        Vector2 direction = ((Vector2)target - rb.position).normalized;
+
+        // Käännetään nuoli oikeaan suuntaan (z-rotation)
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        arrowInstance.transform.rotation = Quaternion.Euler(0, 0, angle);
+
+        Rigidbody2D arrowRb = arrowInstance.GetComponent<Rigidbody2D>();
+        if (arrowRb != null)
+        {
+            arrowRb.linearVelocity = direction * arrowSpeed;
+        }
     }
-    public void CloseDoor()
+
+    private void ShootAtMouse()
     {
-        activeDoor.ReceiveAction(DoorController.OvenToiminto.Sulje);
-    }
-    public void LockDoor()
-    {
-        activeDoor.ReceiveAction(DoorController.OvenToiminto.Lukitse);
-    }
-    public void UnlockDoor()
-    {
-        activeDoor.ReceiveAction(DoorController.OvenToiminto.AvaaLukko);
+        Vector3 mousePosition = Input.mousePosition;
+        mousePosition.z = Camera.main.nearClipPlane;
+        Vector3 worldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
+
+        ShootArrow(worldPosition);
     }
 }
