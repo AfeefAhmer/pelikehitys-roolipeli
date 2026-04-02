@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     private DoorController activeDoor;
 
     public Nuoli chosenArrow;
+    public GameObject ArrowPrefab;
     public Tavara chosenWeapon;
     public InventoryUI inventoryUI;
     public float arrowSpeed = 20f;
@@ -156,11 +157,10 @@ public class PlayerController : MonoBehaviour
     {
         if (chosenArrow == null)
         {
-            Debug.LogWarning("Nuolta ei ole valittu!");
             return;
         }
 
-        GameObject arrowInstance = Instantiate(chosenArrow.gameObject, transform.position, Quaternion.identity);
+        GameObject arrowInstance = Instantiate(ArrowPrefab.gameObject, transform.position, Quaternion.identity);
 
         // 2D: suunta x-y tasossa
         Vector2 direction = ((Vector2)target - rb.position).normalized;

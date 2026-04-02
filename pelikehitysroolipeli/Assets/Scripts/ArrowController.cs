@@ -15,7 +15,7 @@ public class ArrowController : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D other)
     {
         // Tarkistetaan, ettei törmätty pelaajaan
-        if (!other.collider.CompareTag("Player"))
+        if (other.collider.CompareTag("Player")==false)
         {
             // Tulostetaan Debug-logiin mihin nuoli osui
             Debug.Log("Nuoli osui: " + other.collider.name + " (Tag: " + other.collider.tag + ")");
@@ -23,5 +23,6 @@ public class ArrowController : MonoBehaviour
             // Tuhoa nuoli
             Destroy(gameObject);
         }
+        
     }
 }

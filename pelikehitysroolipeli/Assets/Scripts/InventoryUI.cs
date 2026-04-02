@@ -39,7 +39,7 @@ public class InventoryUI : MonoBehaviour
             if (btn != null)
             {
                 Tavara currentItem = item; // viittaa inventory-instanssiin
-                btn.onClick.RemoveAllListeners();
+                //btn.onClick.RemoveAllListeners();
                 btn.onClick.AddListener(() =>
                 {
                     player.KaytaTavaraa(currentItem);
