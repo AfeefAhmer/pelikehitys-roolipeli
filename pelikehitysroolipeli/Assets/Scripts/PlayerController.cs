@@ -19,9 +19,6 @@ public class PlayerController : MonoBehaviour
     public float fireCooldown = 0.5f;  // Aika sekunteina nuolien välillä
     private float lastFireTime = -10f;
 
-    [Header("Crosshair")]
-    public GameObject crosshairPrefab; // Tähtäin prefab
-    private GameObject crosshairInstance;
 
     private void Awake()
     {
@@ -33,12 +30,6 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         inventoryUI?.RefreshUI();
-
-        // Luodaan tähtäin-instanssi
-        if (crosshairPrefab != null)
-        {
-            crosshairInstance = Instantiate(crosshairPrefab, Vector3.zero, Quaternion.identity);
-        }
     }
 
     private void FixedUpdate()
@@ -48,7 +39,6 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        UpdateCrosshair();
 
         // Tarkistetaan hiiren vasen nappi ja cooldown
         if (Input.GetMouseButtonDown(0) && Time.time - lastFireTime >= fireCooldown)
@@ -58,16 +48,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void UpdateCrosshair()
-    {
-        if (crosshairInstance == null) return;
-
-        Vector3 mousePos = Input.mousePosition;
-        mousePos.z = Camera.main.nearClipPlane; // 2D: käytä nearClipPlane
-        Vector3 worldPos = Camera.main.ScreenToWorldPoint(mousePos);
-
-        crosshairInstance.transform.position = new Vector3(worldPos.x, worldPos.y, 0f);
-    }
 
     private void OnMoveAction(InputValue value)
     {
@@ -161,6 +141,13 @@ public class PlayerController : MonoBehaviour
         }
 
         GameObject arrowInstance = Instantiate(ArrowPrefab.gameObject, transform.position, Quaternion.identity);
+
+        // 🔥 LISÄTTY: annetaan Nuoli-data controllerille
+        ArrowController controller = arrowInstance.GetComponent<ArrowController>();
+        if (controller != null)
+        {
+            controller.Initialize(chosenArrow);
+        }
 
         // 2D: suunta x-y tasossa
         Vector2 direction = ((Vector2)target - rb.position).normalized;

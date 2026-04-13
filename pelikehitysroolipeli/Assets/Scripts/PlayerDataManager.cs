@@ -123,11 +123,6 @@ public class PlayerDataManager : MonoBehaviour
         {
             AddExperience(10);
         }
-        if (GUI.Button(new Rect(baseX + buttonWidth + margin, y, buttonWidth, buttonHeight), "-XP"))
-        {
-            experiencePoints = Mathf.Max(0, experiencePoints - 10);
-            UpdateUI();
-        }
 
         y += buttonHeight + margin;
 
@@ -135,10 +130,6 @@ public class PlayerDataManager : MonoBehaviour
         if (GUI.Button(new Rect(baseX, y, buttonWidth, buttonHeight), "+Coins"))
         {
             AddMoney(10);
-        }
-        if (GUI.Button(new Rect(baseX + buttonWidth + margin, y, buttonWidth, buttonHeight), "-Coins"))
-        {
-            TakeMoney(10);
         }
 
         y += buttonHeight + margin;

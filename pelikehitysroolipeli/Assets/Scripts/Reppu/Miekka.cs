@@ -8,6 +8,6 @@ public class Miekka : Tavara
     {
         player.chosenWeapon = this;
         Debug.Log("Miekka valittu aseeksi");
-        return true;
+        return false;
     }
 }

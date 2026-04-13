@@ -1,13 +1,13 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Nuoli : Tavara
 {
-    public string karki;
+    public Nuolikärki karki;   // 🔥 muutettu string → enum
     public string pera;
     public int pituus;
     public GameObject projectilePrefab;
 
-    public void AsetaTiedot(string k, string p, int v)
+    public void AsetaTiedot(Nuolikärki k, string p, int v)
     {
         karki = k;
         pera = p;
@@ -20,7 +20,7 @@ public class Nuoli : Tavara
     {
         player.chosenArrow = this;
         player.ArrowPrefab = projectilePrefab;
-        Debug.Log("Nuoli valittu k�ytt��n");
-        return true;
+        Debug.Log("Nuoli valittu käyttöön");
+        return false;
     }
 }

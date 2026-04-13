@@ -8,6 +8,6 @@ public class Koysi : Tavara
     {
         player.chosenWeapon = this;
         Debug.Log("Köysi valittu aseeksi");
-        return true;
+        return false;
     }
 }

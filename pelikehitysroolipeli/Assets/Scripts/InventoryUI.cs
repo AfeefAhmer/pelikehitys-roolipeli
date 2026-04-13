@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -25,7 +26,11 @@ public class InventoryUI : MonoBehaviour
         foreach (Transform child in itemListParent)
             Destroy(child.gameObject);
 
-        foreach (var item in player.GetInventory().GetItems())
+        // 🔥 Kopioidaan lista ja käännetään se
+        List<Tavara> items = new List<Tavara>(player.GetInventory().GetItems());
+        items.Reverse();
+
+        foreach (var item in items)
         {
             if (item == null) continue;
 
@@ -38,8 +43,7 @@ public class InventoryUI : MonoBehaviour
             Button btn = slot.GetComponent<Button>();
             if (btn != null)
             {
-                Tavara currentItem = item; // viittaa inventory-instanssiin
-                //btn.onClick.RemoveAllListeners();
+                Tavara currentItem = item;
                 btn.onClick.AddListener(() =>
                 {
                     player.KaytaTavaraa(currentItem);
@@ -47,13 +51,14 @@ public class InventoryUI : MonoBehaviour
             }
         }
 
-        // Tekstimuotoinen lista (valinnainen)
+        //Tekstimuotoinen lista(valinnainen)
         if (itemListText != null)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("Items:");
             sb.AppendLine("----------------");
-            foreach (var item in player.GetInventory().GetItems())
+
+            foreach (var item in items)
                 sb.AppendLine(item != null ? item.ToString() : "Null Item");
 
             itemListText.text = sb.ToString();

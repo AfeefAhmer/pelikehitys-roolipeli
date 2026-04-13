@@ -1,16 +1,37 @@
+using Assets.Scripts;
 using UnityEngine;
 
-public class CrabController : MonoBehaviour
+public class CrabController : MonoBehaviour, IDamageable
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public int health = 100;
+    public float speed = 2f;
+
+    public void TakeDamage(int amount)
     {
-        
+        health -= amount;
+
+        Debug.Log("Crab otti vahinkoa: " + amount);
+
+        if (health <= 0)
+        {
+            Die();
+        }
+        else
+        {
+            ReactToDamage();
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    void ReactToDamage()
     {
-        
+        // Esim. rapu suuttuu ja nopeutuu
+        speed += 1f;
+        Debug.Log("Crab suuttui ja nopeutui!");
+    }
+
+    void Die()
+    {
+        Debug.Log("Crab kuoli");
+        Destroy(gameObject);
     }
 }

@@ -8,7 +8,7 @@ public class Jousi : Tavara
     {
         player.chosenWeapon = this;
         Debug.Log("Jousi valittu aseeksi");
-        return true;
+        return false;
     }
 }
 

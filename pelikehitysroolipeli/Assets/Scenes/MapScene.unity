@@ -11000,7 +11000,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 172.4559, y: 1}
+  m_AnchoredPosition: {x: 172.4559, y: 0}
   m_SizeDelta: {x: 100, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1028363519
@@ -11034,10 +11034,10 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
+  m_ChildAlignment: 6
+  m_Spacing: 2
+  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 0
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
@@ -11450,8 +11450,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.008750002, y: 0.028803583}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 305.89, y: -4.505188}
-  m_SizeDelta: {x: -611.7719, y: 9.0105}
+  m_AnchoredPosition: {x: 290.7276, y: -45.9244}
+  m_SizeDelta: {x: -581.4453, y: -73.3289}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1146126611
 MonoBehaviour:
@@ -11466,7 +11466,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1373199125}
-  itemSlotPrefab: {fileID: 6373278475656337228, guid: deae336fcbb0ac446b239c9ccd7847d4, type: 3}
+  itemSlotPrefab: {fileID: 2397646083189605714, guid: deae336fcbb0ac446b239c9ccd7847d4, type: 3}
   itemListParent: {fileID: 1028363518}
   itemListText: {fileID: 1650116249}
 --- !u!114 &1146126612

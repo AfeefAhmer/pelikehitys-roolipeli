@@ -270,10 +270,10 @@ public class PlayerMerchantInteraction : MonoBehaviour
 
                 if (nuoli != null)
                 {
-                    string karki = currentMerchant.GetKarkiNames()[selectedKarki];
+                    Nuolikärki karkiEnum = (Nuolikärki)selectedKarki;
                     string pera = currentMerchant.GetPeraNames()[selectedPera];
 
-                    nuoli.AsetaTiedot(karki, pera, varrenPituus);
+                    nuoli.AsetaTiedot(karkiEnum, pera, varrenPituus);
 
                     if (controller.OstoLisatty(nuoli))
                     {
