@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class CrabController : MonoBehaviour, IDamageable
 {
-    public int health = 100;
+    public int health = 500;
     public float speed = 2f;
 
     public void TakeDamage(int amount)

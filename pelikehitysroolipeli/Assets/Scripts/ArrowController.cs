@@ -13,7 +13,7 @@ public class ArrowController : MonoBehaviour
 
     void Start()
     {
-        MaterialDamage();
+        Damage();
     }
 
     void Update()
@@ -27,11 +27,11 @@ public class ArrowController : MonoBehaviour
     {
         if (nuoli != null)
         {
-            kärki = nuoli.karki;   // 🔥 suoraan enum
+            kärki = nuoli.karki;   //  suoraan enum
             pituus = nuoli.pituus;
         }
 
-        MaterialDamage();
+        Damage();
     }
 
     private void OnCollisionEnter2D(Collision2D other)
@@ -51,7 +51,7 @@ public class ArrowController : MonoBehaviour
         Destroy(gameObject);
     }
 
-    void MaterialDamage()
+    void Damage()
     {
         int baseDamage = 0;
 
@@ -70,10 +70,7 @@ public class ArrowController : MonoBehaviour
                 break;
         }
 
-        // pituus lisää pientä bonusta
-        damageAmount = baseDamage + Mathf.RoundToInt(pituus / 5f);
-
         //nopeus vaikuttaa vielä lopulliseen vahinkoon
-        damageAmount = Mathf.RoundToInt(damageAmount * speed);
+        damageAmount = baseDamage + Mathf.RoundToInt(damageAmount * speed);
     }
 }

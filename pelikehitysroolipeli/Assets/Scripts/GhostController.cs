@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GhostController : MonoBehaviour, IDamageable
 {
-    public int health = 100;
+    public int health = 500;
 
     private SpriteRenderer spriteRenderer;
     private Collider2D colider;
