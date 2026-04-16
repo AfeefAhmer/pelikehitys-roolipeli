@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using Assets.Scripts;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class GhostController : MonoBehaviour, IDamageable
 {
@@ -10,6 +11,9 @@ public class GhostController : MonoBehaviour, IDamageable
     private Collider2D colider;
 
     private Vector3 savedPosition;
+
+    // 🔥 LISÄÄ TÄMÄ
+    public event UnityAction OnDeath;
 
     void Awake()
     {
@@ -29,9 +33,7 @@ public class GhostController : MonoBehaviour, IDamageable
         }
         else
         {
-            // Talletetaan sijainti juuri ennen katoamista
             savedPosition = transform.position;
-
             StartCoroutine(Disappear(3f));
         }
     }
@@ -45,7 +47,6 @@ public class GhostController : MonoBehaviour, IDamageable
 
         yield return new WaitForSeconds(duration);
 
-        // Palautetaan samaan paikkaan
         transform.position = savedPosition;
 
         spriteRenderer.enabled = true;
@@ -57,6 +58,10 @@ public class GhostController : MonoBehaviour, IDamageable
     void Die()
     {
         Debug.Log("Ghost kuoli lopullisesti");
+
+        // 🔥 TÄRKEIN RIVI
+        OnDeath?.Invoke();
+
         Destroy(gameObject);
     }
 }

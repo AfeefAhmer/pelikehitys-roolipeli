@@ -105,7 +105,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   paino: 1
   tilavuus: 0.5
-  karki: 
+  karki: 0
   pera: 
   pituus: 0
   projectilePrefab: {fileID: 0}
@@ -121,8 +121,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22d1f97f1b2f2ca45868e69a28ee517e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 4
-  damageAmount: 1
+  speed: 2
+  "k\xE4rki": 0
 --- !u!50 &-7396561486741829838
 Rigidbody2D:
   serializedVersion: 5

@@ -1,10 +1,14 @@
 using Assets.Scripts;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class CrabController : MonoBehaviour, IDamageable
 {
     public int health = 500;
     public float speed = 2f;
+
+    // TÄMÄ PUUTTUI
+    public event UnityAction OnDeath;
 
     public void TakeDamage(int amount)
     {
@@ -24,7 +28,6 @@ public class CrabController : MonoBehaviour, IDamageable
 
     void ReactToDamage()
     {
-        // Esim. rapu suuttuu ja nopeutuu
         speed += 1f;
         Debug.Log("Crab suuttui ja nopeutui!");
     }
@@ -32,6 +35,10 @@ public class CrabController : MonoBehaviour, IDamageable
     void Die()
     {
         Debug.Log("Crab kuoli");
+
+        //  ILMOITA SPAWNERILLE
+        OnDeath?.Invoke();
+
         Destroy(gameObject);
     }
 }

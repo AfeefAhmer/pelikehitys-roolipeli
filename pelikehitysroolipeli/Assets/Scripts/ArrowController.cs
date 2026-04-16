@@ -4,7 +4,7 @@ using UnityEngine;
 public class ArrowController : MonoBehaviour
 {
     // Nuolen nopeus
-    public float speed = 5f;
+    public float speed = 2f;
 
     public Nuolikärki kärki;
     private int damageAmount;
