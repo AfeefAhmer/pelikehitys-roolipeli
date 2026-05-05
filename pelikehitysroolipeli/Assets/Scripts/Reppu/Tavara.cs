@@ -17,4 +17,8 @@ public class Tavara : MonoBehaviour
         Debug.Log("T‰t‰ tavaraa ei voi k‰ytt‰‰");
         return false;
     }
+    public Tavara TeeKopio() 
+    {
+        return (Tavara)MemberwiseClone();
+    }
 }

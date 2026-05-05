@@ -3,7 +3,7 @@ using Assets.Scripts;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class GhostController : MonoBehaviour, IDamageable
+public class BossController : MonoBehaviour, IDamageable
 {
     public int health = 500;
     public float speed = 5f;
@@ -26,7 +26,7 @@ public class GhostController : MonoBehaviour, IDamageable
     void Start()
     {
         FindPlayer();
-       rb = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
     void Update()
@@ -94,7 +94,11 @@ public class GhostController : MonoBehaviour, IDamageable
     {
         Debug.Log("Ghost kuoli lopullisesti");
 
-        OnDeath?.Invoke();
+        if (GameManager.instance != null)
+        {
+            GameManager.instance.WinGame();
+        }
+
         Destroy(gameObject);
     }
     private void OnCollisionEnter2D(Collision2D collision)

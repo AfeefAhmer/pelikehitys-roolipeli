@@ -1,12 +1,17 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
+    public static PlayerController Instance { get; private set; }
     private Vector2 lastMovement;
     private Rigidbody2D rb;
 
     [SerializeField] private float moveSpeed = 5f;
+    [Header("Health")]
+    [SerializeField] private int maxHealth = 100;
+    private int currentHealth;
 
     private Reppu inventory;
     private DoorController activeDoor;
@@ -22,14 +27,42 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        // 🔹 LUODAAN inventory ennen muita skriptejä
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+        if (inventory == null)
+        {
+        //  LUODAAN inventory ennen muita skriptejä
         inventory = new Reppu(10, 20f, 15f);
+        }
+        
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
-
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Transform spawn = GameObject.FindWithTag("SpawnPoint").transform;
+        transform.position = spawn.position;
+    }
+    void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        currentHealth = maxHealth;
+
         inventoryUI?.RefreshUI();
+
+        //  päivitä UI heti
+        if (PlayerDataManager.Instance != null)
+        {
+            PlayerDataManager.Instance.SetHealth(currentHealth);
+        }
     }
 
     private void FixedUpdate()
@@ -64,6 +97,7 @@ public class PlayerController : MonoBehaviour
         else if (collision.CompareTag("Item"))
         {
             Tavara itemPrefab = collision.GetComponent<Tavara>();
+            
             if (itemPrefab != null)
             {
                 Tavara itemData = CreateInventoryItem(itemPrefab);
@@ -86,11 +120,13 @@ public class PlayerController : MonoBehaviour
     private Tavara CreateInventoryItem(Tavara prefab)
     {
         Tavara itemInstance = Instantiate(prefab);
+        Tavara tavara= (Tavara)prefab.GetComponent<Tavara>().TeeKopio();
         itemInstance.gameObject.SetActive(false);
-        return itemInstance;
+        return tavara;
+        
     }
 
-    // 🔹 INVENTORY METODIT
+    //  INVENTORY METODIT
     public Reppu GetInventory() => inventory;
 
     public bool OstoLisatty(Tavara tavara)
@@ -132,7 +168,7 @@ public class PlayerController : MonoBehaviour
     public void LockDoor() => activeDoor?.ReceiveAction(DoorController.OvenToiminto.Lukitse);
     public void UnlockDoor() => activeDoor?.ReceiveAction(DoorController.OvenToiminto.AvaaLukko);
 
-    // 🔹 NUOLEN AMPUMINEN 2D
+    //  NUOLEN AMPUMINEN 2D
     public void ShootArrow(Vector3 target)
     {
         if (chosenArrow == null)
@@ -142,7 +178,7 @@ public class PlayerController : MonoBehaviour
 
         GameObject arrowInstance = Instantiate(ArrowPrefab.gameObject, transform.position, Quaternion.identity);
 
-        // 🔥 LISÄTTY: annetaan Nuoli-data controllerille
+        //  LISÄTTY: annetaan Nuoli-data controllerille
         ArrowController controller = arrowInstance.GetComponent<ArrowController>();
         if (controller != null)
         {
@@ -170,5 +206,28 @@ public class PlayerController : MonoBehaviour
         Vector3 worldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
 
         ShootArrow(worldPosition);
+    }
+    public void TakeDamage(int amount)
+    {
+        currentHealth -= amount;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+
+        Debug.Log("Player otti damagea: " + amount);
+
+        // päivitä UI
+        if (PlayerDataManager.Instance != null)
+        {
+            PlayerDataManager.Instance.SetHealth(currentHealth);
+        }
+
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+    void Die()
+    {
+        Debug.Log("Player kuoli");
+        Destroy(gameObject);
     }
 }

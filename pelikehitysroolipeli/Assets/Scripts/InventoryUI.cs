@@ -14,6 +14,7 @@ public class InventoryUI : MonoBehaviour
 
     private void Start()
     {
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
         RefreshUI();
     }
 
@@ -26,7 +27,7 @@ public class InventoryUI : MonoBehaviour
         foreach (Transform child in itemListParent)
             Destroy(child.gameObject);
 
-        // 🔥 Kopioidaan lista ja käännetään se
+        //  Kopioidaan lista ja käännetään se
         List<Tavara> items = new List<Tavara>(player.GetInventory().GetItems());
         items.Reverse();
 

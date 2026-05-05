@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using Assets.Scripts;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class EnemySpawner : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class EnemySpawner : MonoBehaviour
 
     private bool playerInRange = false;
     private bool isSpawning = false;
+    public event UnityAction SpawnerEnd;
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -75,6 +77,7 @@ public class EnemySpawner : MonoBehaviour
         // Kaikki spawnattu JA tapettu → tuhoa spawner
         if (totalDead >= maxTotal)
         {
+            SpawnerEnd.Invoke();
             Destroy(gameObject);
         }
     }

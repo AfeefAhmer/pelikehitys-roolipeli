@@ -230,13 +230,13 @@ public class PlayerMerchantInteraction : MonoBehaviour
         PlayerController controller = GetComponent<PlayerController>();
         if (controller == null) return;
 
-        // 🍖 FOOD MERCHANT
+        //  FOOD MERCHANT
         if (currentMerchant.merchantType == MerchantType.FoodMerchant)
         {
             if (ateriaPrefab != null)
             {
                 GameObject go = Instantiate(ateriaPrefab);
-                Tavara tavara = go.GetComponent<Ateria>();
+                Tavara tavara = (Ateria)go.GetComponent<Ateria>().TeeKopio();
 
                 if (tavara != null)
                 {
@@ -260,13 +260,14 @@ public class PlayerMerchantInteraction : MonoBehaviour
             }
         }
 
-        // 🏹 ARROW MERCHANT
+        //  ARROW MERCHANT
         else if (currentMerchant.merchantType == MerchantType.ArrowMerchant)
         {
             if (nuoliPrefab != null)
             {
                 GameObject go = Instantiate(nuoliPrefab);
-                Nuoli nuoli = go.GetComponent<Nuoli>();
+                Nuoli nuoli =(Nuoli) go.GetComponent<Nuoli>().TeeKopio();
+                
 
                 if (nuoli != null)
                 {
