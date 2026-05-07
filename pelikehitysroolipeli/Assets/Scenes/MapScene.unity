@@ -366,7 +366,7 @@ GameObject:
   - component: {fileID: 40370172}
   m_Layer: 5
   m_Name: ArrowMerchantPanel
-  m_TagString: Untagged
+  m_TagString: MerchantPanel
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -27039,6 +27039,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55df1dff8a1cc6e419f2bd22981175a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerName: Player
   experiencePoints: 0
   money: 100
   health: 100
@@ -33237,7 +33238,7 @@ GameObject:
   - component: {fileID: 2128026351}
   m_Layer: 5
   m_Name: Food
-  m_TagString: Untagged
+  m_TagString: MerchantPanel
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

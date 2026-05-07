@@ -1,10 +1,23 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.IO;
+
+[System.Serializable]
+public class PlayerSaveData
+{
+    public string playerName;
+    public int experiencePoints;
+    public int money;
+    public int health;
+}
 
 public class PlayerDataManager : MonoBehaviour
 {
     public static PlayerDataManager Instance { get; private set; }
+
+    [Header("Player Info")]
+    public string playerName = "Player";
 
     [Header("Player Stats")]
     [SerializeField] private int experiencePoints = 0;
@@ -15,6 +28,8 @@ public class PlayerDataManager : MonoBehaviour
     [SerializeField] private TMP_Text experienceText;
     [SerializeField] private TMP_Text coinText;
     [SerializeField] private TMP_Text hitpointText;
+
+    private string savePath;
 
     public int ExperiencePoints => experiencePoints;
     public int Money => money;
@@ -30,6 +45,8 @@ public class PlayerDataManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
+        savePath = Application.persistentDataPath + "/player_save.json";
 
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
@@ -51,6 +68,7 @@ public class PlayerDataManager : MonoBehaviour
         UpdateUI();
     }
 
+    // ================= FIND UI =================
     private void FindUIReferences()
     {
         experienceText = GameObject.Find("ExperienceText")?.GetComponent<TMP_Text>();
@@ -58,6 +76,7 @@ public class PlayerDataManager : MonoBehaviour
         hitpointText = GameObject.Find("HitpointText")?.GetComponent<TMP_Text>();
     }
 
+    // ================= UI UPDATE =================
     private void UpdateUI()
     {
         if (experienceText != null)
@@ -68,6 +87,45 @@ public class PlayerDataManager : MonoBehaviour
 
         if (hitpointText != null)
             hitpointText.text = "HP: " + health;
+    }
+
+    // ================= SAVE =================
+    public void SaveData()
+    {
+        PlayerSaveData data = new PlayerSaveData
+        {
+            playerName = playerName,
+            experiencePoints = experiencePoints,
+            money = money,
+            health = health
+        };
+
+        string json = JsonUtility.ToJson(data, true);
+        File.WriteAllText(savePath, json);
+
+        Debug.Log("Saved to: " + savePath);
+    }
+
+    // ================= LOAD =================
+    public void LoadData()
+    {
+        if (!File.Exists(savePath))
+        {
+            Debug.Log("No save file found!");
+            return;
+        }
+
+        string json = File.ReadAllText(savePath);
+        PlayerSaveData data = JsonUtility.FromJson<PlayerSaveData>(json);
+
+        playerName = data.playerName;
+        experiencePoints = data.experiencePoints;
+        money = data.money;
+        health = data.health;
+
+        UpdateUI();
+
+        Debug.Log("Game Loaded");
     }
 
     // ================= RESET =================
