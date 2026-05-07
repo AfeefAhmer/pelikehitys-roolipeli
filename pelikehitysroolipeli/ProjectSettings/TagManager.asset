@@ -9,7 +9,6 @@ TagManager:
   - Item
   - Spawner
   - SpawnPoint
-  - MerchantPanel
   layers:
   - Default
   - TransparentFX

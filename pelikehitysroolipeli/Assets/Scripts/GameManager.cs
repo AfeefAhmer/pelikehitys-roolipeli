@@ -11,8 +11,7 @@ public class GameManager : MonoBehaviour
     {
         MainMenu,
         Playing,
-        Paused,
-        PauseMenu
+        Paused
     }
 
     public GameState currentState;
@@ -82,66 +81,33 @@ public class GameManager : MonoBehaviour
             case GameState.Paused:
                 Time.timeScale = 0f;
                 break;
-
-            case GameState.PauseMenu:
-                Time.timeScale = 0f;
-                break;
         }
     }
 
     // ================= TEST UI (OnGUI) =================
     private void OnGUI()
     {
-        // ================= STATE DEBUG =================
-        GUI.Box(new Rect(10, 10, 180, 200), "Game States");
+        GUI.Box(new Rect(10, 10, 160, 180), "Game States");
 
-        if (GUI.Button(new Rect(20, 40, 160, 30), "Main Menu"))
+        if (GUI.Button(new Rect(20, 40, 140, 30), "Main Menu"))
         {
             ChangeState(GameState.MainMenu);
             SceneManager.LoadScene(0);
         }
 
-        if (GUI.Button(new Rect(20, 80, 160, 30), "Playing"))
+        if (GUI.Button(new Rect(20, 80, 140, 30), "Playing"))
         {
             ChangeState(GameState.Playing);
         }
 
-        if (GUI.Button(new Rect(20, 120, 160, 30), "Paused"))
+        if (GUI.Button(new Rect(20, 120, 140, 30), "Paused"))
         {
             ChangeState(GameState.Paused);
         }
 
-        if (GUI.Button(new Rect(20, 160, 160, 30), "Pause Menu"))
-        {
-            ChangeState(GameState.PauseMenu);
-        }
-
-        if (GUI.Button(new Rect(20, 200, 160, 30), "Quit"))
+        if (GUI.Button(new Rect(20, 160, 140, 30), "Quit"))
         {
             Application.Quit();
-        }
-
-        // ================= PAUSE MENU UI =================
-        if (currentState == GameState.PauseMenu)
-        {
-            GUI.Box(new Rect(220, 10, 200, 160), "Pause Menu");
-
-            if (GUI.Button(new Rect(230, 40, 180, 30), "Save"))
-            {
-                if (PlayerDataManager.Instance != null)
-                    PlayerDataManager.Instance.SaveData();
-            }
-
-            if (GUI.Button(new Rect(230, 80, 180, 30), "Load"))
-            {
-                if (PlayerDataManager.Instance != null)
-                    PlayerDataManager.Instance.LoadData();
-            }
-
-            if (GUI.Button(new Rect(230, 120, 180, 30), "Resume"))
-            {
-                ChangeState(GameState.Playing);
-            }
         }
     }
 
