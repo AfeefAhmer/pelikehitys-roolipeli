@@ -30,7 +30,6 @@ public class PlayerController : MonoBehaviour
     private float lastFireTime = -10f;
     public Weapon currentWeapon;
     public PlayerWeaponManager weaponManager;
-    public Weapon chosenWeapon;
 
     private void Awake()
     {
