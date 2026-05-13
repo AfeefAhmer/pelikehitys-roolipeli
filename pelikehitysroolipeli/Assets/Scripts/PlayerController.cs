@@ -28,6 +28,9 @@ public class PlayerController : MonoBehaviour
 
     public float fireCooldown = 0.5f;
     private float lastFireTime = -10f;
+    public Weapon currentWeapon;
+    public PlayerWeaponManager weaponManager;
+    public Weapon chosenWeapon;
 
     private void Awake()
     {
@@ -73,6 +76,11 @@ public class PlayerController : MonoBehaviour
         {
             PlayerDataManager.Instance.SetHealth(currentHealth);
         }
+
+        currentHealth = maxHealth;
+
+        if (weaponManager == null)
+            weaponManager = GetComponent<PlayerWeaponManager>();
     }
 
     private void FixedUpdate()
@@ -85,14 +93,18 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (
-            Input.GetMouseButtonDown(0) &&
-            Time.time - lastFireTime >= fireCooldown
-        )
+        if (Input.GetMouseButtonDown(0))
         {
-            ShootAtMouse();
+            Vector3 mousePosition = Input.mousePosition;
+            mousePosition.z = Camera.main.nearClipPlane;
 
-            lastFireTime = Time.time;
+            Vector3 worldPosition =
+                Camera.main.ScreenToWorldPoint(mousePosition);
+
+            Vector2 direction =
+                ((Vector2)worldPosition - rb.position).normalized;
+
+            weaponManager?.Attack(direction);
         }
     }
 
@@ -295,13 +307,21 @@ public class PlayerController : MonoBehaviour
     private void ShootAtMouse()
     {
         Vector3 mousePosition = Input.mousePosition;
-
         mousePosition.z = Camera.main.nearClipPlane;
 
         Vector3 worldPosition =
             Camera.main.ScreenToWorldPoint(mousePosition);
 
-        ShootArrow(worldPosition);
+        Vector2 direction =
+            ((Vector2)worldPosition - rb.position).normalized;
+
+        if (currentWeapon == null)
+        {
+            Debug.Log("No weapon equipped");
+            return;
+        }
+
+        currentWeapon.Attack(direction);
     }
 
     // HEALTH
@@ -333,5 +353,14 @@ public class PlayerController : MonoBehaviour
     void Die()
     {
         Debug.Log("Player kuoli");
+    }
+    public void EquipWeapon(Weapon weapon)
+    {
+        currentWeapon = weapon;
+        Debug.Log("Weapon equipped: " + weapon.name);
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            currentWeapon.Use(this);
+        }
     }
 }
