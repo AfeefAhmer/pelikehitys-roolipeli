@@ -3,7 +3,7 @@ using Assets.Scripts;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class BossController : MonoBehaviour, IDamageable
+public class BossController : MonoBehaviour
 {
     public int health = 500;
     public float speed = 5f;
@@ -12,7 +12,6 @@ public class BossController : MonoBehaviour, IDamageable
     private Collider2D colider;
 
     private Vector3 savedPosition;
-    public event UnityAction OnDeath;
     public int damage = 10;
     private Transform player;
     Rigidbody2D rb;

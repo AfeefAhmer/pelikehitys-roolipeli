@@ -46,17 +46,9 @@ public class CrabController : MonoBehaviour, IDamageable
         {
             Die();
         }
-        else
-        {
-            ReactToDamage();
-        }
     }
 
-    void ReactToDamage()
-    {
-        speed += 1f;
-        Debug.Log("Crab suuttui ja nopeutui!");
-    }
+
 
     void Die()
     {
